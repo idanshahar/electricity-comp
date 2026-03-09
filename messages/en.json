@@ -1,0 +1,96 @@
+{
+  "app": {
+    "title": "Electricity Rate Comparison",
+    "subtitle": "Find the best electricity plan for you based on your actual consumption data",
+    "disclaimer": "Prices are based on IEC baseline rate (64 agorot/kWh). Results are estimates only."
+  },
+  "steps": {
+    "upload": "Upload Data",
+    "select": "Select Plans",
+    "results": "Results"
+  },
+  "upload": {
+    "title": "Upload Your Consumption File",
+    "description": "Download your consumption data from the IEC website as a CSV file and upload it here.",
+    "dropzone": "Drag and drop your CSV file here",
+    "or": "or",
+    "browse": "Browse File",
+    "howTo": "How to download your consumption data?",
+    "howToDesc": "Log in to IEC website → Account Management → Consumption → Download Meter Data",
+    "summary": "Consumption Summary",
+    "dateRange": "Period",
+    "totalKwh": "Total Consumption",
+    "avgDaily": "Daily Average",
+    "days": "days",
+    "continue": "Continue to Plan Selection",
+    "heatmap": "Hourly Consumption Map",
+    "heatmapDesc": "Average kWh by hour and day of week",
+    "error": "Error loading file",
+    "customer": "Customer",
+    "meter": "Meter"
+  },
+  "select": {
+    "title": "Select Plans to Compare",
+    "description": "Choose the providers and plans you want to compare. You can also add a custom plan.",
+    "addCustom": "Add Custom Plan",
+    "selected": "Selected",
+    "plans": "plans",
+    "calculate": "Calculate Savings",
+    "selectAll": "Select All",
+    "clearAll": "Clear All",
+    "smartMeterRequired": "Requires smart meter",
+    "back": "Back",
+    "noneSelected": "No plan selected – please select at least one plan"
+  },
+  "custom": {
+    "title": "Custom Plan",
+    "nameHe": "Plan Name (Hebrew)",
+    "nameEn": "Plan Name (English)",
+    "discount": "Discount (%)",
+    "allHours": "All hours",
+    "timeWindow": "Time Window",
+    "from": "From",
+    "to": "To",
+    "days": "Days",
+    "daysOptions": {
+      "0": "Sun",
+      "1": "Mon",
+      "2": "Tue",
+      "3": "Wed",
+      "4": "Thu",
+      "5": "Fri",
+      "6": "Sat"
+    },
+    "add": "Add Plan",
+    "cancel": "Cancel"
+  },
+  "results": {
+    "title": "Comparison Results",
+    "description": "Based on {days} days of consumption data",
+    "bestPlan": "Best Plan",
+    "maxSavings": "Max Savings",
+    "annualEst": "Annual Estimate",
+    "provider": "Provider",
+    "plan": "Plan",
+    "eligibleKwh": "Eligible kWh",
+    "savings": "Savings (₪)",
+    "effectivePct": "Effective Discount",
+    "annualSavings": "Est. Annual Savings",
+    "smartMeter": "Smart Meter",
+    "required": "Required",
+    "notRequired": "Not Required",
+    "noSavings": "No Savings",
+    "viewByPlan": "By Plan",
+    "viewByProvider": "By Provider",
+    "startOver": "Start Over",
+    "chart": "Comparison Chart",
+    "originalCost": "Full Cost",
+    "discountedCost": "Cost After Discount",
+    "baseline": "IEC (baseline)"
+  },
+  "days": {
+    "short": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+    "long": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+  },
+  "hours": "hours"
+}
