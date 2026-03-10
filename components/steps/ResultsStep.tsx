@@ -3,13 +3,25 @@
 import { useState, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { Trophy, Zap, TrendingUp, RotateCcw } from "lucide-react";
-import type { CalculationResult } from "@/lib/types";
+import type {
+  CalculationResult,
+  ParsedCSV,
+  DiscountPlan,
+  PeriodSelection,
+} from "@/lib/types";
+import { PROVIDERS } from "@/lib/providers";
+import { calculateAllPlans } from "@/lib/calculator";
+import { buildMonthlyConsumption } from "@/lib/clustering";
 import SavingsChart from "@/components/SavingsChart";
+import ConsumptionBarChart from "@/components/ConsumptionBarChart";
+import PeriodSelector from "@/components/PeriodSelector";
 import { formatNIS, formatKwh, formatPercent } from "@/lib/utils";
 
 interface Props {
-  results: CalculationResult[];
-  dataDays: number;
+  parsedCSV: ParsedCSV;
+  initialResults: CalculationResult[];
+  selectedPlanIds: string[];
+  customPlans: DiscountPlan[];
   onStartOver: () => void;
   locale: "he" | "en";
 }
@@ -17,13 +29,81 @@ interface Props {
 type ViewMode = "plan" | "provider";
 
 export default function ResultsStep({
-  results,
-  dataDays,
+  parsedCSV,
+  initialResults,
+  selectedPlanIds,
+  customPlans,
   onStartOver,
   locale,
 }: Props) {
   const t = useTranslations("results");
   const [viewMode, setViewMode] = useState<ViewMode>("plan");
+
+  // Build monthly consumption data with cluster assignments
+  const months = useMemo(
+    () =>
+      buildMonthlyConsumption(
+        parsedCSV.records,
+        parsedCSV.startDate,
+        parsedCSV.endDate
+      ),
+    [parsedCSV]
+  );
+
+  // Period selection state — defaults to full range
+  const [selection, setSelection] = useState<PeriodSelection>({
+    startMonthIndex: 0,
+    endMonthIndex: Math.max(0, months.length - 1),
+  });
+
+  const isFullRange =
+    selection.startMonthIndex === 0 &&
+    selection.endMonthIndex === months.length - 1;
+
+  // Compute filtered results based on selected period
+  const filteredResults = useMemo(() => {
+    if (isFullRange || months.length === 0) return initialResults;
+
+    const startMonth = months[selection.startMonthIndex];
+    const endMonth = months[selection.endMonthIndex];
+
+    const rangeStart = new Date(startMonth.year, startMonth.month, 1);
+    const rangeEnd = new Date(
+      endMonth.year,
+      endMonth.month + 1,
+      0,
+      23,
+      59,
+      59
+    );
+
+    const filteredRecords = parsedCSV.records.filter(
+      (r) => r.datetime >= rangeStart && r.datetime <= rangeEnd
+    );
+
+    if (filteredRecords.length === 0) return initialResults;
+
+    const uniqueDays = new Set(
+      filteredRecords.map((r) => r.datetime.toDateString())
+    );
+    const filteredDays = uniqueDays.size;
+
+    const allBuiltInPlans = PROVIDERS.flatMap((p) => p.plans);
+    const allPlans = [...allBuiltInPlans, ...customPlans];
+    const plansToCalculate = allPlans.filter((p) =>
+      selectedPlanIds.includes(p.id)
+    );
+
+    return calculateAllPlans(filteredRecords, plansToCalculate, filteredDays);
+  }, [
+    selection,
+    isFullRange,
+    months,
+    parsedCSV.records,
+    initialResults,
+    selectedPlanIds,
+    customPlans,
+  ]);
 
   const name = (r: CalculationResult) =>
     locale === "he"
@@ -33,17 +113,22 @@ export default function ResultsStep({
   // By provider: keep only the best plan per provider
   const byProvider = useMemo(() => {
     const map = new Map<string, CalculationResult>();
-    for (const r of results) {
+    for (const r of filteredResults) {
       const existing = map.get(r.providerId);
       if (!existing || r.savings > existing.savings) {
         map.set(r.providerId, r);
       }
     }
     return [...map.values()].sort((a, b) => b.savings - a.savings);
-  }, [results]);
+  }, [filteredResults]);
 
-  const displayResults = viewMode === "plan" ? results : byProvider;
-  const best = results[0];
+  const displayResults = viewMode === "plan" ? filteredResults : byProvider;
+  const best = filteredResults[0];
+
+  // dataDays for display: use filtered period's day count when filtering
+  const displayDays = isFullRange
+    ? parsedCSV.dataDays
+    : (best?.dataDays ?? parsedCSV.dataDays);
 
   return (
     <div className="space-y-6">
@@ -51,7 +136,7 @@ export default function ResultsStep({
         <div>
           <h2 className="text-2xl font-bold text-gray-900">{t("title")}</h2>
           <p className="text-gray-500 mt-1">
-            {t("description", { days: dataDays })}
+            {t("description", { days: displayDays })}
           </p>
         </div>
         <button
@@ -62,6 +147,27 @@ export default function ResultsStep({
           {t("startOver")}
         </button>
       </div>
+
+      {/* Monthly consumption bar chart */}
+      {months.length > 0 && (
+        <div className="border border-gray-200 rounded-xl p-4">
+          <ConsumptionBarChart
+            months={months}
+            locale={locale}
+            selectedRange={selection}
+          />
+        </div>
+      )}
+
+      {/* Period range selector */}
+      {months.length > 1 && (
+        <PeriodSelector
+          months={months}
+          selection={selection}
+          onSelectionChange={setSelection}
+          locale={locale}
+        />
+      )}
 
       {/* Summary cards */}
       {best && (
@@ -153,9 +259,7 @@ export default function ResultsStep({
                       )}
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-gray-700">
-                    {n.plan}
-                  </td>
+                  <td className="px-4 py-3 text-gray-700">{n.plan}</td>
                   <td className="px-4 py-3 text-end text-gray-600">
                     {isBaseline ? "—" : formatKwh(r.eligibleKwh)}
                     {!isBaseline && (
@@ -165,7 +269,9 @@ export default function ResultsStep({
                     )}
                   </td>
                   <td className="px-4 py-3 text-end">
-                    <span className={`font-semibold ${r.savings > 0 ? "text-green-700" : "text-gray-500"}`}>
+                    <span
+                      className={`font-semibold ${r.savings > 0 ? "text-green-700" : "text-gray-500"}`}
+                    >
                       {r.savings > 0 ? `+ ${formatNIS(r.savings)}` : t("noSavings")}
                     </span>
                   </td>

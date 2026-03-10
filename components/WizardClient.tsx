@@ -91,10 +91,12 @@ export default function WizardClient({ locale, stepLabels }: Props) {
             locale={locale}
           />
         )}
-        {step === "results" && (
+        {step === "results" && parsedCSV && (
           <ResultsStep
-            results={results}
-            dataDays={parsedCSV?.dataDays ?? 0}
+            parsedCSV={parsedCSV}
+            initialResults={results}
+            selectedPlanIds={selectedPlanIds}
+            customPlans={customPlans}
             onStartOver={handleStartOver}
             locale={locale}
           />

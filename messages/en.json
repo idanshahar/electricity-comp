@@ -92,5 +92,25 @@
     "short": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
     "long": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
   },
-  "hours": "hours"
+  "hours": "hours",
+  "consumptionChart": {
+    "title": "Monthly Consumption",
+    "subtitle": "kWh by month, colored by usage pattern",
+    "clusters": {
+      "low": "Low consumption period",
+      "normal": "Normal period",
+      "high": "High consumption period"
+    },
+    "partialMonth": "partial month",
+    "partialMonthNote": "* Bars with dashed borders indicate partial months (data doesn't cover the full month).",
+    "average": "Avg"
+  },
+  "periodSelector": {
+    "title": "Filter Analysis Period",
+    "subtitle": "Drag the handles to select a date range for comparison",
+    "month": "month",
+    "months": "months",
+    "resetFull": "Show Full Period",
+    "filteredNote": "Results below are filtered to the selected period only."
+  }
 }

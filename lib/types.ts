@@ -69,6 +69,26 @@ export interface CalculationResult {
 
 export type WizardStep = "upload" | "select" | "results";
 
+export type ConsumptionCluster = "low" | "normal" | "high";
+
+export interface MonthlyConsumption {
+  year: number;
+  month: number; // 0-indexed (JS convention)
+  monthKey: string; // "YYYY-MM"
+  labelEn: string; // e.g. "Jan 2024"
+  labelHe: string; // e.g. "ינואר 2024"
+  totalKwh: number;
+  cluster: ConsumptionCluster;
+  clusterIndex: number; // 0=low, 1=normal, 2=high
+  recordCount: number;
+  isPartialMonth: boolean;
+}
+
+export interface PeriodSelection {
+  startMonthIndex: number; // index into MonthlyConsumption[]
+  endMonthIndex: number; // inclusive
+}
+
 export interface CustomPlanFormData {
   nameHe: string;
   nameEn: string;
