@@ -2,11 +2,14 @@
 
 import { useCallback, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Upload, FileText, AlertCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { Upload, FileText, AlertCircle, ChevronDown, ChevronUp, Zap } from "lucide-react";
 import { parseCSV } from "@/lib/csvParser";
 import type { ParsedCSV } from "@/lib/types";
 import ConsumptionHeatmap from "@/components/ConsumptionHeatmap";
+import IecLoginStep from "@/components/steps/IecLoginStep";
 import { formatKwh } from "@/lib/utils";
+
+type DataTab = "csv" | "iec";
 
 interface Props {
   onComplete: (data: ParsedCSV) => void;
@@ -15,6 +18,8 @@ interface Props {
 
 export default function UploadStep({ onComplete, locale }: Props) {
   const t = useTranslations("upload");
+  const tIec = useTranslations("iecLogin");
+  const [activeTab, setActiveTab] = useState<DataTab>("csv");
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [parsed, setParsed] = useState<ParsedCSV | null>(null);
@@ -61,6 +66,40 @@ export default function UploadStep({ onComplete, locale }: Props) {
 
   return (
     <div className="space-y-6">
+      {/* Tab switcher */}
+      <div className="flex gap-1 bg-gray-100 p-1 rounded-xl w-fit">
+        <button
+          onClick={() => setActiveTab("csv")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            activeTab === "csv"
+              ? "bg-white text-gray-900 shadow-sm"
+              : "text-gray-500 hover:text-gray-700"
+          }`}
+        >
+          <Upload className="w-4 h-4" />
+          {tIec("tabUpload")}
+        </button>
+        <button
+          onClick={() => setActiveTab("iec")}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            activeTab === "iec"
+              ? "bg-white text-gray-900 shadow-sm"
+              : "text-gray-500 hover:text-gray-700"
+          }`}
+        >
+          <Zap className="w-4 h-4" />
+          {tIec("tabLogin")}
+        </button>
+      </div>
+
+      {/* IEC Login tab */}
+      {activeTab === "iec" && (
+        <IecLoginStep onComplete={onComplete} locale={locale} />
+      )}
+
+      {/* CSV Upload tab */}
+      {activeTab === "csv" && (
+      <>
       <div>
         <h2 className="text-2xl font-bold text-gray-900">{t("title")}</h2>
         <p className="text-gray-500 mt-1">{t("description")}</p>
@@ -201,6 +240,8 @@ export default function UploadStep({ onComplete, locale }: Props) {
             </button>
           </div>
         </div>
+      )}
+      </>
       )}
     </div>
   );
