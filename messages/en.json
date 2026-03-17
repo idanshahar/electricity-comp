@@ -105,6 +105,24 @@
     "partialMonthNote": "* Bars with dashed borders indicate partial months (data doesn't cover the full month).",
     "average": "Avg"
   },
+  "iecLogin": {
+    "title": "Connect Your IEC Account",
+    "description": "Automatically fetch your consumption data using your Israeli ID number",
+    "idLabel": "Israeli ID Number",
+    "idPlaceholder": "Enter your 9-digit ID",
+    "sendCode": "Send Verification Code",
+    "otpLabel": "Verification Code",
+    "otpDescription": "Enter the code sent to your registered phone or email",
+    "otpPlaceholder": "Enter code",
+    "verify": "Verify",
+    "fetching": "Fetching your consumption data...",
+    "fetchingDesc": "This may take a few seconds",
+    "errorTitle": "Connection Failed",
+    "tryAgain": "Try Again",
+    "privacyNote": "Your credentials are never stored. Data is fetched once and processed locally.",
+    "tabUpload": "Upload CSV",
+    "tabLogin": "Connect IEC Account"
+  },
   "periodSelector": {
     "title": "Filter Analysis Period",
     "subtitle": "Drag the handles to select a date range for comparison",
