@@ -7,6 +7,8 @@ import {
   IecApiError,
 } from "@/lib/iecApi";
 
+export const preferredRegion = ["fra1"];
+
 interface SessionInit {
   factorId: string;
   stateToken: string;

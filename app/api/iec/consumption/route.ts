@@ -12,6 +12,7 @@ import type { ConsumptionRecord, ParsedCSV } from "@/lib/types";
 
 // 600 days × ~1.5s ÷ 30 concurrent ≈ 30s. 300s is a safe ceiling.
 export const maxDuration = 300;
+export const preferredRegion = ["fra1"];
 
 interface SessionWithToken {
   idToken: string;

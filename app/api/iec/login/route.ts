@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { oktaInitLogin, encryptCookiePayload, IecApiError } from "@/lib/iecApi";
 
+export const preferredRegion = ["fra1"];
+
 export async function POST(req: NextRequest) {
   try {
     const { israeliId } = await req.json();
